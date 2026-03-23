@@ -97,3 +97,4 @@ Partial sync is experimental and available in JavaScript, WASM, React Native, Py
 - Pull is idempotent — safe to call multiple times
 - Both push and pull are atomic — partial failures don't corrupt the database
 - Remote encryption is supported via cipher + key configuration (see SDK-specific docs)
+- **Security:** Sync uploads local database contents to Turso Cloud. Enable remote encryption (see `references/encryption.md`) if the database contains sensitive data. Ensure auth tokens are kept secret and not hardcoded in source.
