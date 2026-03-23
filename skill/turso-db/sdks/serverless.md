@@ -209,6 +209,27 @@ client.close();
 
 **Compat layer limitations**: `transaction()` and `sync()` are not supported.
 
+## Vite + Bun: Loading Environment Variables
+
+Vite does not expose `process.env` to client code by default, and with Bun the standard `define` approach can fail because `process.env.TURSO_*` is undefined at config evaluation time. Use `loadEnv` to explicitly load `.env` files:
+
+```javascript
+// vite.config.js
+import { defineConfig, loadEnv } from 'vite';
+
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+  return {
+    define: {
+      'process.env.TURSO_DATABASE_URL': JSON.stringify(env.TURSO_DATABASE_URL),
+      'process.env.TURSO_AUTH_TOKEN': JSON.stringify(env.TURSO_AUTH_TOKEN),
+    },
+  };
+});
+```
+
+The third argument `''` to `loadEnv` removes the `VITE_` prefix requirement, so it loads all env vars from `.env` regardless of prefix.
+
 ## Key Differences from Native SDK
 
 | Feature | Native (`@tursodatabase/database`) | Serverless (`@tursodatabase/serverless`) |

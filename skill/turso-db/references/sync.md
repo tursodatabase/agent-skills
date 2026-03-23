@@ -16,20 +16,26 @@ Turso supports bidirectional sync between a local embedded database and a remote
 
 If you need to inspect a synced database, make a copy of the file first and open the copy.
 
+## You Must Write Your Own Sync Logic
+
+**There is no automatic background sync.** The sync SDK gives you `push()` and `pull()` methods, but you are responsible for calling them at the right time. The SDK will never call them for you.
+
+This is by design — your app knows best when to sync (e.g., on user action, on a timer, when connectivity changes, after a write batch).
+
 ## Core Operations
 
 Every SDK exposes these sync operations:
 
 ### `pull()`
 
-Downloads remote changes to the local replica.
+Downloads remote changes to the local replica. Returns `true` if new changes were applied.
 
 1. Sends current local revision to remote
 2. Remote responds with all frames since that revision
 3. Frames are applied to local WAL
 4. Local metadata updated with new revision
 
-After pull, local queries immediately see remote changes.
+After pull, local queries immediately see remote changes. When `pull()` returns `true`, the app should likely refresh any UI or cached state that depends on database content — the local data has changed and stale reads are a common source of bugs in local-first apps.
 
 ### `push()`
 
@@ -50,14 +56,138 @@ Returns current sync engine statistics:
 
 | Field | Description |
 |-------|-------------|
-| `cdc_operations` | Number of pending CDC operations (since last push) |
-| `main_wal_size` | Current main WAL file size in bytes |
-| `revert_wal_size` | Current revert WAL file size in bytes |
-| `network_sent_bytes` | Total bytes uploaded to remote |
-| `network_received_bytes` | Total bytes downloaded from remote |
-| `last_pull_unix_time` | Unix timestamp of last pull (null if never pulled) |
-| `last_push_unix_time` | Unix timestamp of last push (null if never pushed) |
+| `cdcOperations` | Number of pending CDC operations (since last push) |
+| `mainWalSize` | Current main WAL file size in bytes |
+| `revertWalSize` | Current revert WAL file size in bytes |
+| `networkSentBytes` | Total bytes uploaded to remote |
+| `networkReceivedBytes` | Total bytes downloaded from remote |
+| `lastPullUnixTime` | Unix timestamp of last pull (null if never pulled) |
+| `lastPushUnixTime` | Unix timestamp of last push (null if never pushed) |
 | `revision` | Current synced revision (opaque token, null if not yet synced) |
+
+## TypeScript Sync Examples
+
+### Setup
+
+```typescript
+import { connect } from "@tursodatabase/sync";
+
+const db = await connect({
+  path: "local.db",
+  url: "libsql://your-db-org.turso.io",
+  authToken: "your-token",
+  longPollTimeoutMs: 5_000, // recommended — enables long-polling for pull()
+});
+```
+
+The `connect()` options:
+
+| Option | Description |
+|--------|-------------|
+| `path` | Local file path for the database (required) |
+| `url` | Remote Turso Cloud URL. Omit for local-only. Can be a `() => string \| null` function for deferred sync |
+| `authToken` | Auth token string, or `() => Promise<string>` for short-lived credentials |
+| `remoteEncryption` | `{ key: string, cipher: string }` for encrypted remote databases |
+| `transform` | Callback to transform mutations before push (conflict resolution) |
+| `longPollTimeoutMs` | When set, `pull()` holds the connection open until changes arrive or timeout. Max effective value is **5000ms** (server caps it). **Recommended** — set this to `5000` to avoid wasteful polling |
+| `tracing` | `'error' \| 'warn' \| 'info' \| 'debug' \| 'trace'` |
+
+### Push After Writes
+
+```typescript
+// Write locally, then push to remote
+await db.prepare("INSERT INTO todos (title) VALUES (?)").run("Buy milk");
+await db.prepare("INSERT INTO todos (title) VALUES (?)").run("Write code");
+await db.push();
+```
+
+### Long-Polling Pull (Recommended)
+
+With `longPollTimeoutMs` set (max 5s), `pull()` blocks until remote changes arrive or the timeout expires. This is the preferred approach — it gives near-instant change detection without wasteful polling.
+
+```typescript
+// Loop: pull() blocks until remote has new changes (or 5s timeout)
+async function watchForChanges() {
+  while (true) {
+    const hasChanges = await db.pull();
+    if (hasChanges) {
+      console.log("Remote changed — refreshing");
+      // IMPORTANT: refresh UI / invalidate queries — local data has changed
+    }
+  }
+}
+watchForChanges();
+```
+
+### Pull on Interval (Without Long-Polling)
+
+If you cannot use long-polling, poll on a timer instead:
+
+```typescript
+setInterval(async () => {
+  const hasChanges = await db.pull();
+  if (hasChanges) {
+    console.log("Got new changes from remote");
+  }
+}, 30_000);
+```
+
+### Separate Push and Pull Loops (Recommended)
+
+Run pull and push in separate loops so they don't block each other — pull can long-poll for changes while push fires independently after writes.
+
+```typescript
+// Pull loop — runs continuously, reacts to remote changes fast
+async function pullLoop(db) {
+  while (true) {
+    try {
+      const hasChanges = await db.pull();
+      if (hasChanges) {
+        // IMPORTANT: refresh UI / invalidate queries — local data has changed
+      }
+    } catch (err) {
+      console.error("Pull failed:", err);
+      await new Promise(r => setTimeout(r, 1_000)); // back off briefly on error
+    }
+  }
+}
+
+// Push loop — sends local changes to remote on its own cadence
+async function pushLoop(db, intervalMs = 5_000) {
+  while (true) {
+    try {
+      await db.push();
+    } catch (err) {
+      console.error("Push failed:", err);
+    }
+    await new Promise(r => setTimeout(r, intervalMs));
+  }
+}
+
+pullLoop(db);
+pushLoop(db);
+```
+
+If you combine push and pull in a single loop, pull blocks push (especially with long-polling), delaying outbound changes.
+
+### Checkpoint Periodically
+
+```typescript
+// Compact the WAL after syncing to keep the local file small
+setInterval(async () => {
+  await db.checkpoint();
+}, 5 * 60_000); // every 5 minutes
+```
+
+### Monitor Sync Stats
+
+```typescript
+const stats = await db.stats();
+console.log(`Pending changes: ${stats.cdcOperations}`);
+console.log(`WAL size: ${stats.mainWalSize} bytes`);
+console.log(`Last pull: ${stats.lastPullUnixTime}`);
+console.log(`Last push: ${stats.lastPushUnixTime}`);
+```
 
 ## Bootstrap
 

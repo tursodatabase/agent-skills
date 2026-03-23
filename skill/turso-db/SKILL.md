@@ -56,8 +56,11 @@ Use this to decide which reference file to load:
 
 ## SDK Decision Tree
 
-**JavaScript / TypeScript / Node.js?**
+**JavaScript / TypeScript / Node.js?** (local-only or embedded database)
 → Read `sdks/javascript.md`
+
+**JavaScript / TypeScript / Node.js with sync?** (local-first/offline-first, sync with Turso Cloud)
+→ Use `@tursodatabase/sync` instead — same API as `@tursodatabase/database` plus push/pull. See `sdks/javascript.md` for API and `references/sync.md` for sync operations.
 
 **Serverless / Edge functions?** (Cloudflare Workers, Vercel, Deno Deploy, connecting to Turso Cloud via HTTP)
 → Read `sdks/serverless.md`
@@ -83,9 +86,9 @@ Use this to decide which reference file to load:
 |----------|---------|-----------------|
 | JavaScript (Node.js) | `@tursodatabase/database` | `npm i @tursodatabase/database` |
 | Serverless / Edge | `@tursodatabase/serverless` | `npm i @tursodatabase/serverless` |
-| JavaScript Sync | `@tursodatabase/sync` | `npm i @tursodatabase/sync` |
+| JavaScript Sync (local-first/offline-first) | `@tursodatabase/sync` | `npm i @tursodatabase/sync` |
 | WASM (Browser) | `@tursodatabase/database-wasm` | `npm i @tursodatabase/database-wasm` |
-| WASM + Sync | `@tursodatabase/sync-wasm` | `npm i @tursodatabase/sync-wasm` |
+| WASM + Sync (local-first/offline-first) | `@tursodatabase/sync-wasm` | `npm i @tursodatabase/sync-wasm` |
 | React Native | `@tursodatabase/sync-react-native` | `npm i @tursodatabase/sync-react-native` |
 | Rust | `turso` | `cargo add turso` |
 | Python | `pyturso` | `pip install pyturso` |
