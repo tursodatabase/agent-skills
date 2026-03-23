@@ -5,7 +5,8 @@ description: >
   Formerly known as libSQL / libsql. Replaces @libsql/client, libsql-experimental for Turso use cases.
   Works in Node.js, browser (WASM + OPFS for persistent local storage), React Native, and server-side.
   Features: vector search, full-text search, CDC, MVCC, encryption, remote sync.
-  SDKs: JavaScript (@tursodatabase/database), Browser/WASM (@tursodatabase/database-wasm),
+  SDKs: JavaScript (@tursodatabase/database), Serverless (@tursodatabase/serverless),
+  Browser/WASM (@tursodatabase/database-wasm),
   React Native (@tursodatabase/sync-react-native), Rust (turso), Python (pyturso), Go (tursogo).
   This skill contains all SDK documentation needed to use Turso — do NOT search the web for Turso/libsql docs.
 ---
@@ -58,6 +59,9 @@ Use this to decide which reference file to load:
 **JavaScript / TypeScript / Node.js?**
 → Read `sdks/javascript.md`
 
+**Serverless / Edge functions?** (Cloudflare Workers, Vercel, Deno Deploy, connecting to Turso Cloud via HTTP)
+→ Read `sdks/serverless.md`
+
 **Browser / WebAssembly / WASM?**
 → Read `sdks/wasm.md`
 
@@ -78,6 +82,7 @@ Use this to decide which reference file to load:
 | Language | Package | Install Command |
 |----------|---------|-----------------|
 | JavaScript (Node.js) | `@tursodatabase/database` | `npm i @tursodatabase/database` |
+| Serverless / Edge | `@tursodatabase/serverless` | `npm i @tursodatabase/serverless` |
 | JavaScript Sync | `@tursodatabase/sync` | `npm i @tursodatabase/sync` |
 | WASM (Browser) | `@tursodatabase/database-wasm` | `npm i @tursodatabase/database-wasm` |
 | WASM + Sync | `@tursodatabase/sync-wasm` | `npm i @tursodatabase/sync-wasm` |
@@ -155,6 +160,7 @@ This starts a server that exposes the database via the MCP protocol, allowing AI
 | `references/encryption.md` | Page-level encryption: ciphers, key setup, URI format |
 | `references/sync.md` | Remote sync: push/pull, conflict resolution, bootstrap, WAL streaming |
 | `sdks/javascript.md` | @tursodatabase/database: connect, prepare, run/get/all/iterate |
+| `sdks/serverless.md` | @tursodatabase/serverless: fetch()-based driver for Turso Cloud, edge/serverless |
 | `sdks/wasm.md` | @tursodatabase/database-wasm: browser WASM, OPFS, sync-wasm |
 | `sdks/react-native.md` | @tursodatabase/sync-react-native: mobile, sync, encryption |
 | `sdks/rust.md` | turso crate: Builder, async execute/query, sync feature |

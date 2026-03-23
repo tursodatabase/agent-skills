@@ -2,12 +2,10 @@
 
 Turso supports CDC for tracking all database changes (inserts, updates, deletes) in real-time per connection.
 
-**Status:** Early Preview
-
 ## Enabling CDC
 
 ```sql
-PRAGMA unstable_capture_data_changes_conn('<mode>[,custom_table_name]');
+PRAGMA capture_data_changes_conn('<mode>[,custom_table_name]');
 ```
 
 ### Modes
@@ -25,7 +23,7 @@ PRAGMA unstable_capture_data_changes_conn('<mode>[,custom_table_name]');
 By default, changes go to `turso_cdc`. Specify a custom table name:
 
 ```sql
-PRAGMA unstable_capture_data_changes_conn('full,my_audit_log');
+PRAGMA capture_data_changes_conn('full,my_audit_log');
 ```
 
 ## CDC Table Schema (v2)
@@ -48,7 +46,7 @@ COMMIT records (`change_type = 2`) mark transaction boundaries. In autocommit mo
 
 ```sql
 -- Enable full CDC
-PRAGMA unstable_capture_data_changes_conn('full');
+PRAGMA capture_data_changes_conn('full');
 
 -- Create and populate a table
 CREATE TABLE users (
