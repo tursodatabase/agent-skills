@@ -15,7 +15,7 @@ An agent skill that helps AI coding agents work with Turso, an in-process SQLite
 ## Install
 
 ```bash
-npx skills add sivukhin/turso-skill
+npx skills add tursodatabase/agent-skills
 ```
 
 Or manually:
@@ -26,4 +26,4 @@ cp -r skills/turso-db ~/.claude/skills/turso-db
 
 ## Usage
 
-Once installed, the skill activates automatically when you work with Turso/libSQL databases. Use `/turso-db` to explicitly invoke it.
+Once installed, the skill activates automatically when you work with Turso databases. Use `/turso-db` to explicitly invoke it.
