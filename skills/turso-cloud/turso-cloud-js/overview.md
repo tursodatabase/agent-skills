@@ -40,7 +40,7 @@ await tx.prepare("UPDATE accounts SET balance = balance + ? WHERE id = ?").run([
 await tx.commit();
 ```
 
-## Local-first with sync — `@tursodatabase/sync` (BETA)
+## Local-first with sync — `@tursodatabase/sync`
 
 For apps that need fast local reads, offline support, or embedded replicas that sync with Turso Cloud. All reads and writes happen against a local database file; sync is explicit (`push()`/`pull()`) and conflict resolution is last-push-wins.
 

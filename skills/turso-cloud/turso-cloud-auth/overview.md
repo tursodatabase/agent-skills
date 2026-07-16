@@ -171,7 +171,7 @@ turso db tokens invalidate <database-name>
 turso group tokens invalidate <group-name>
 ```
 
-Group tokens and database tokens are **independent** — they are signed with separate keys, and invalidation of one kind never affects the other. Invalidating a group's tokens does not invalidate database-scoped tokens for databases in that group, and invalidating a database's tokens does not invalidate group tokens (which keep working against that database).
+Group tokens and database tokens are invalidated **independently**: invalidating a group's tokens does not invalidate database-scoped tokens for databases in that group, and invalidating a database's tokens does not invalidate group tokens (which keep working against that database).
 
 ## Docs
 
