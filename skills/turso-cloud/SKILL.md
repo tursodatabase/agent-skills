@@ -26,7 +26,7 @@ Work with Turso Cloud from Go: `tursogo` for local-first databases that sync wit
 
 ## [turso-cloud-rust](turso-cloud-rust/overview.md)
 
-Work with Turso Cloud from Rust using the `libsql` crate for remote access over the libsql protocol. Use when connecting Rust applications to Turso Cloud.
+Work with Turso Cloud from Rust: the `turso` crate (`sync` feature) for local-first databases that sync with the cloud, and the `libsql` crate for remote-only access over the libsql protocol. Use when connecting Rust applications to Turso Cloud.
 
 ## [turso-cloud-auth](turso-cloud-auth/overview.md)
 

@@ -42,7 +42,32 @@ await tx.commit();
 
 ## Local-first with sync — `@tursodatabase/sync` (BETA)
 
-For apps that need fast local reads, offline support, or embedded replicas that sync with Turso Cloud. Sync is explicit (`push()`/`pull()`), conflict resolution is last-push-wins, and a synced database file must **never** be opened outside the sync SDK. See `https://docs.turso.tech/sync/usage.md` for setup, API, and examples.
+For apps that need fast local reads, offline support, or embedded replicas that sync with Turso Cloud. All reads and writes happen against a local database file; sync is explicit (`push()`/`pull()`) and conflict resolution is last-push-wins.
+
+```bash
+npm i @tursodatabase/sync
+```
+
+```javascript
+import { connect } from "@tursodatabase/sync";
+
+const db = await connect({
+  path: "local.db",
+  url: process.env.TURSO_DATABASE_URL,
+  authToken: process.env.TURSO_AUTH_TOKEN,
+});
+
+// Pull remote changes to the local database
+await db.pull();
+
+// Reads and writes are local
+await db.prepare("INSERT INTO todos (title) VALUES (?)").run("Buy milk");
+
+// Push local writes to Turso Cloud
+await db.push();
+```
+
+> **Warning:** A synced database file must **never** be opened outside the sync SDK (CLI, plain SQLite, or non-sync SDKs will corrupt sync state).
 
 ## Package quick reference
 

@@ -164,12 +164,14 @@ turso org jwks remove <name>
 Invalidating rotates the signing keys — **all** previously issued tokens for the target stop working, so every consumer must receive a new token:
 
 ```bash
-# Invalidate all tokens for a database
+# Invalidate all database-scoped tokens for a database
 turso db tokens invalidate <database-name>
 
-# Invalidate all tokens for a group (and all its databases)
+# Invalidate all group-scoped tokens for a group
 turso group tokens invalidate <group-name>
 ```
+
+Group tokens and database tokens are **independent** — they are signed with separate keys, and invalidation of one kind never affects the other. Invalidating a group's tokens does not invalidate database-scoped tokens for databases in that group, and invalidating a database's tokens does not invalidate group tokens (which keep working against that database).
 
 ## Docs
 

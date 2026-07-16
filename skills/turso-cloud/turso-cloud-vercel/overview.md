@@ -49,9 +49,12 @@ vercel integration open tursocloud
 
 > **Note:** Available `vercel integration` subcommands vary between CLI versions — run `vercel integration --help` to see what the installed version supports before relying on a subcommand.
 
-## Provisioning a new database (safe, autonomous)
+## Provisioning a new database
 
-Provisioning on the free `starter` plan is a non-destructive, additive operation an agent may perform without confirmation:
+Provisioning is additive and non-destructive, but whether an agent may do it autonomously depends on the installation's billing plan:
+
+- On **paid plans**, Turso does not limit the number of databases — an agent may provision without confirmation.
+- On the free **`starter` plan**, the installation is limited to **100 databases** — get the user's approval before provisioning so an autonomous agent doesn't silently consume the quota. If the plan is unknown, assume `starter` and ask.
 
 ```bash
 vercel integration add tursocloud --name my-db --metadata region=iad1 --plan starter
