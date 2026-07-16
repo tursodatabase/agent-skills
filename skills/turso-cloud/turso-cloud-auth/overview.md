@@ -4,7 +4,7 @@ Turso Cloud uses scoped, JWT-based tokens to control access to databases. Every 
 
 ## Database URL
 
-Find the database URL with the Turso CLI (`turso db show <database-name> --url`) or the Platform API. It looks like:
+If the database was provisioned through an integration or marketplace, its URL (and auth token) is usually already injected into the project's environment — prefer those variables over constructing anything by hand. Otherwise, find the database URL with the Turso CLI (`turso db show <database-name> --url`) or the Platform API. It looks like:
 
 ```bash
 # libSQL protocol (SDK default)
