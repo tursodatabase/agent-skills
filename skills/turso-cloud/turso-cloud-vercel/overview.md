@@ -76,7 +76,7 @@ The `region` metadata key takes a Vercel region code, mapped to a Turso location
 | `bom1` | `aws-ap-south-1` | AP South (Mumbai) |
 | `hnd1` | `aws-ap-northeast-1` | AP NorthEast (Tokyo) |
 
-Pick the region where the project's **Vercel Functions** run — the database's client is the deployed function, not the developer's machine, so never choose a region by probing latency from the local environment (e.g. `curl https://region.turso.io`). To determine the function region:
+Pick the region where the project's **Vercel Functions** run — the database's client is the deployed function, not the developer's machine, so never choose a region based on the local environment. To determine the function region:
 
 1. Check `vercel.json` for a `regions` field (e.g. `"regions": ["dub1"]`) — it overrides the project setting.
 2. Otherwise use the project's **Function Region** setting (Vercel dashboard → Project Settings → Functions). If it was never changed, Vercel's default is `iad1`.
