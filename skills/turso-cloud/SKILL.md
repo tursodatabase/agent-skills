@@ -30,7 +30,7 @@ Work with Turso Cloud from Rust: the `turso` crate (`sync` feature) for local-fi
 
 ## [turso-cloud-auth](turso-cloud-auth/overview.md)
 
-Authenticate and authorize access to Turso Cloud databases: database URLs, platform tokens via the Turso CLI, scoping (group/database/read-only/time-limited), fine-grained per-table permissions, external auth providers via JWKS (Clerk, Auth0), and token invalidation. Use when issuing credentials, restricting what a client can do, or wiring an existing auth provider to Turso.
+Authenticate and authorize access to Turso Cloud databases: database URLs, signing in as an agent (headless CLI login), platform tokens via the Turso CLI, scoping (group/database/read-only/time-limited), fine-grained per-table permissions, external auth providers via JWKS (Clerk, Auth0), and token invalidation. Use when issuing credentials, restricting what a client can do, or wiring an existing auth provider to Turso.
 
 ## [turso-cloud-vercel](turso-cloud-vercel/overview.md)
 
