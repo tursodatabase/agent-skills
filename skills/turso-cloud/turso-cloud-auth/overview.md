@@ -16,6 +16,40 @@ https://[DB-NAME]-[ORG-NAME].turso.io
 
 WebSockets generally perform better when keeping a socket open for multiple queries; HTTP is typically more efficient for single queries — benchmark both when it matters.
 
+## Signing in as an agent
+
+Turso's signup and first sign-in are browser flows; in an automated environment they need one page opened by a human, once. Everything after that (creating tokens, listing databases, running queries) is fully non-interactive.
+
+By default, `turso auth signup` and `turso auth login` open a browser at `https://api.turso.tech/signup?port=<port>&redirect=true&state=<state>&type=cli` (no `/signup` for login) and wait for the token on a local callback server, so the human only has to finish the page. On a machine without a browser, pass `--headless` to print a URL instead:
+
+```bash
+turso auth signup --headless  # new account
+turso auth login --headless   # existing account
+
+# Visit the following URL to login:
+# https://api.turso.tech/signup?redirect=false
+```
+
+With `--headless` the CLI prints the URL and exits without starting a callback server, so finishing the page does not log the agent's CLI in. Once the human is signed in, ask them for a platform API token (e.g. from `turso auth api-tokens mint <token-name> --org <org-slug>`) and pass it to the CLI:
+
+```bash
+export TURSO_API_TOKEN=<token>
+# or persist it in the CLI config
+turso config set token <token>
+```
+
+> **Warning:** In an attempt on 22 October 2026 an automated browser could not complete this page: a direct request to `https://clerk.turso.tech/v1/client/sign_ups` with the publishable key returned HTTP 403 with body `error code: 1010` (Cloudflare bot filtering), and the signup form unmounted on submit with no visible error and no request reaching Clerk. If you see either symptom, do not loop on retries; hand the URL to a human once.
+
+In that same attempt, AgentID (`oauth_custom_agentid`) appeared in the instance's identification strategies but returned "The External Account was not found" before a Turso account existed, so it was no help for a first-time signup.
+
+After that, the agent can work on its own:
+
+```bash
+turso auth whoami            # confirm which account the CLI is using
+turso db list                # list databases
+turso db tokens create <db>  # create a database token for the SDK
+```
+
 ## Auth tokens
 
 SDKs require an auth token unless working against a local database. Tokens are passed as `authToken` when creating a client:
@@ -182,3 +216,4 @@ Group tokens and database tokens are invalidated **independently**: invalidating
 | Platform tokens | `https://docs.turso.tech/sdk/authorization/tokens.md` |
 | Fine-grained permissions | `https://docs.turso.tech/sdk/authorization/fine-grained-permissions.md` |
 | External auth providers (JWKS) | `https://docs.turso.tech/sdk/authorization/jwks.md` |
+| CLI headless mode | `https://docs.turso.tech/cli/headless-mode.md` |

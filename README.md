@@ -21,7 +21,7 @@ Work with Turso, an in-process SQLite-compatible database written in Rust.
 Work with Turso Cloud, the fully managed SQLite-compatible database platform.
 
 - **SDK references** -- JavaScript/TypeScript (`@tursodatabase/serverless`, sync family), Python, Go, Rust
-- **Auth** -- platform tokens, scoping, fine-grained per-table permissions, external auth providers via JWKS (Clerk, Auth0)
+- **Auth** -- signing in as an agent (headless CLI login), platform tokens, scoping, fine-grained per-table permissions, external auth providers via JWKS (Clerk, Auth0)
 - **Integrations** -- databases provisioned through the [Vercel Marketplace](https://vercel.com/marketplace/tursocloud): provisioning, regions, env vars, safety rules
 
 ## Install
